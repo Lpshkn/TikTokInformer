@@ -1,4 +1,10 @@
 import psycopg2
+import logging
+from tiktokinformer.informer.user import User
+from tiktokinformer.informer.tiktok import Tiktok
+
+logging.basicConfig(format='[%(asctime)s]: %(message)s\n',
+                    level=logging.WARNING)
 
 
 class Database:
@@ -62,3 +68,27 @@ class Database:
         if self._connection is None:
             raise ValueError("Connection to the database wasn't made")
         return self._connection
+
+    def add_user(self, user: User):
+        """
+        Adds a new row of User into the users table.
+
+        :param user: object of informer.user.User
+        """
+        sql_query = """
+                    INSERT INTO users (unique_id, nickname, followers_cnt, following_cnt, heart_cnt, video_cnt)
+                    VALUES (%(unique_id)s, %(nickname)s, %(followers_cnt)s, %(following_cnt)s, %(heart_cnt)s, %(video_cnt)s)
+                    """
+        cursor = self.connection.cursor()
+        try: 
+            cursor.execute(sql_query, {
+                'unique_id': user.unique_id,
+                'nickname': user.nickname,
+                'followers_cnt': user.followers,
+                'following_cnt': user.following,
+                'heart_cnt': user.heart_count,
+                'video_cnt': user.video_count
+            })
+            self.connection.commit()
+        except psycopg2.errors.UniqueViolation:
+            logging.warning('Attempt of inserting duplicate')
