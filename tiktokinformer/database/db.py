@@ -2,6 +2,7 @@ import psycopg2
 import logging
 from tiktokinformer.informer.user import User
 from tiktokinformer.informer.tiktok import Tiktok
+from datetime import datetime as dt
 
 logging.basicConfig(format='[%(asctime)s]: %(message)s\n',
                     level=logging.WARNING)
@@ -68,6 +69,21 @@ class Database:
         if self._connection is None:
             raise ValueError("Connection to the database wasn't made")
         return self._connection
+
+    def _add_row(self, sql_query: str, **kwargs):
+        """
+        Performs the sql query with passed arguments.
+
+        :param sql_query: sql query to the database
+        :param kwargs: arguments of the query
+        """
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(sql_query, kwargs)
+            self.connection.commit()
+        except Exception as e:
+            self.connection.rollback()
+            logging.warning(e)
 
     def add_user(self, user: User):
         """
