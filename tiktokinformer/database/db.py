@@ -12,8 +12,9 @@ class Database:
                 password: str,
                 database: str):
         """
+        Creates connection to the database using the passed credentials.
 
-        :return:
+        :return: the connection object
         """
         db_object = Database()
         db_object._connection = psycopg2.connect(host=host,
@@ -26,7 +27,7 @@ class Database:
 
     def _init_tables(self):
         """
-
+        Creates tables if it weren't created.
         """
         sql_query = """
                     CREATE TABLE IF NOT EXISTS users
