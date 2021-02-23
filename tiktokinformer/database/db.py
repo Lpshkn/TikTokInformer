@@ -94,6 +94,11 @@ class Database:
         sql_query = """
                     INSERT INTO users (unique_id, nickname, followers_cnt, following_cnt, heart_cnt, video_cnt)
                     VALUES (%(unique_id)s, %(nickname)s, %(followers_cnt)s, %(following_cnt)s, %(heart_cnt)s, %(video_cnt)s)
+                    ON CONFLICT (unique_id) DO UPDATE SET nickname = EXCLUDED.nickname,
+                                                          followers_cnt = EXCLUDED.followers_cnt,
+                                                          following_cnt = EXCLUDED.following_cnt,
+                                                          heart_cnt = EXCLUDED.heart_cnt,
+                                                          video_cnt = EXCLUDED.video_cnt
                     """
         self._add_row(sql_query,
                       unique_id=user.unique_id,
@@ -112,6 +117,9 @@ class Database:
         sql_query = """
                     INSERT INTO tiktoks (id, user_id, description, time)
                     VALUES (%(id)s, %(unique_id)s, %(description)s, %(time)s)
+                    ON CONFLICT (id) DO UPDATE SET user_id = EXCLUDED.user_id,
+                                                   description = EXCLUDED.description,
+                                                   time = EXCLUDED.time
                     """
 
         time = dt.fromtimestamp(tiktok.time).strftime('%Y-%m-%d %X')
