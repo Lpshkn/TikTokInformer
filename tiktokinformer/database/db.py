@@ -95,16 +95,28 @@ class Database:
                     INSERT INTO users (unique_id, nickname, followers_cnt, following_cnt, heart_cnt, video_cnt)
                     VALUES (%(unique_id)s, %(nickname)s, %(followers_cnt)s, %(following_cnt)s, %(heart_cnt)s, %(video_cnt)s)
                     """
-        cursor = self.connection.cursor()
-        try: 
-            cursor.execute(sql_query, {
-                'unique_id': user.unique_id,
-                'nickname': user.nickname,
-                'followers_cnt': user.followers,
-                'following_cnt': user.following,
-                'heart_cnt': user.heart_count,
-                'video_cnt': user.video_count
-            })
-            self.connection.commit()
-        except psycopg2.errors.UniqueViolation:
-            logging.warning('Attempt of inserting duplicate')
+        self._add_row(sql_query,
+                      unique_id=user.unique_id,
+                      nickname=user.nickname,
+                      followers_cnt=user.followers,
+                      following_cnt=user.following,
+                      heart_cnt=user.heart_count,
+                      video_cnt=user.video_count)
+
+    def add_tiktok(self, tiktok: Tiktok):
+        """
+        Adds a new row of Tiktok into the tiktoks table.
+
+        :param tiktok: object of informer.tiktok.Tiktok
+        """
+        sql_query = """
+                    INSERT INTO tiktoks (id, user_id, description, time)
+                    VALUES (%(id)s, %(unique_id)s, %(description)s, %(time)s)
+                    """
+
+        time = dt.fromtimestamp(tiktok.time).strftime('%Y-%m-%d %X')
+        self._add_row(sql_query,
+                      id=tiktok.id,
+                      unique_id=tiktok.user_id,
+                      description=tiktok.desc,
+                      time=time)
