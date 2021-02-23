@@ -15,7 +15,7 @@ class TikTokInformer:
     def __init__(self, names: list, database: Database):
         self.database = database
         self.names = names
-        self.api = TikTokApi.get_instance()
+        self.api = TikTokApi.get_instance(use_selenium=True)
 
     async def run(self):
         """
