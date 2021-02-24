@@ -128,3 +128,21 @@ class Database:
                       unique_id=tiktok.user_id,
                       description=tiktok.desc,
                       time=time)
+
+    def get_last_timestamp(self, username: str):
+        """
+        Returns the timestamp of the last video of $username.
+
+        :param username: the name of a user
+        :return: datetime
+        """
+        sql_query = """
+                    SELECT MAX(time)
+                    FROM tiktoks
+                    WHERE user_id = %(username)s;
+                    """
+        cursor = self.connection.cursor()
+        cursor.execute(sql_query, {'username': username})
+        timestamp = cursor.fetchone()
+
+        return timestamp
