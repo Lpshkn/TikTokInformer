@@ -144,4 +144,4 @@ class Database:
         cursor.execute(sql_query, {'username': username})
         timestamp = cursor.fetchone()[0]
 
-        return timestamp
+        return timestamp if timestamp else dt.now()
