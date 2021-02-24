@@ -64,4 +64,6 @@ class TikTokInformer:
                     self.last_timestamps[user.unique_id] = tiktok.time
                     self.database.add_tiktok(tiktok)
 
+                    logging.info(f"New video of '{user.unique_id}': {tiktok.desc}")
+
         await asyncio.sleep(self.timeout)
