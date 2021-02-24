@@ -55,7 +55,13 @@ class TikTokInformer:
             user = User(user_dict)
             self.database.add_user(user)
 
-            tiktok = Tiktok(user_dict['items'][0])
-            self.database.add_tiktok(tiktok)
+            # Iterate from the last tiktok to the first
+            for item in user_dict['items'][::-1]:
+                tiktok = Tiktok(item)
+
+                # Check whether it's a new video or not
+                if tiktok.time > self.last_timestamps.get(user.unique_id, 0):
+                    self.last_timestamps[user.unique_id] = tiktok.time
+                    self.database.add_tiktok(tiktok)
 
         await asyncio.sleep(self.timeout)
