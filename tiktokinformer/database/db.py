@@ -122,12 +122,11 @@ class Database:
                                                    time = EXCLUDED.time
                     """
 
-        time = dt.fromtimestamp(tiktok.time).strftime('%Y-%m-%d %X')
         self._add_row(sql_query,
                       id=tiktok.id,
                       unique_id=tiktok.user_id,
                       description=tiktok.desc,
-                      time=time)
+                      time=tiktok.time)
 
     def get_last_timestamp(self, username: str):
         """
@@ -143,6 +142,6 @@ class Database:
                     """
         cursor = self.connection.cursor()
         cursor.execute(sql_query, {'username': username})
-        timestamp = cursor.fetchone()
+        timestamp = cursor.fetchone()[0]
 
         return timestamp
