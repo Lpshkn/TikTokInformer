@@ -1,0 +1,15 @@
+beautifulsoup4~=4.9.3
+soupsieve~=2.2
+pip~=21.0.1
+pyee~=8.1.0
+certifi~=2020.12.5
+chardet~=4.0.0
+urllib3~=1.26.3
+greenlet~=1.0a1
+psycopg2~=2.8.6
+idna~=2.10
+selenium~=3.141.0
+requests~=2.25.1
+playwright~=0.171.1
+TikTokApi~=3.9.0
+setuptools~=40.8.0
