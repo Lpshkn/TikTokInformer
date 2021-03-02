@@ -40,40 +40,40 @@ class Database:
         """
         with self.connection.cursor() as cur:
             cur.execute("CREATE TABLE IF NOT EXISTS users ("
-                        "unique_id TEXT PRIMARY KEY,"
-                        "nickname TEXT NOT NULL,"
-                        "followers_cnt INTEGER NOT NULL,"
-                        "following_cnt INTEGER NOT NULL,"
-                        "heart_cnt INTEGER NOT NULL,"
-                        "video_cnt INTEGER NOT NULL);")
+                        "unique_id TEXT PRIMARY KEY, "
+                        "nickname TEXT NOT NULL, "
+                        "followers_cnt INTEGER NOT NULL, "
+                        "following_cnt INTEGER NOT NULL, "
+                        "heart_cnt INTEGER NOT NULL, "
+                        "video_cnt INTEGER NOT NULL); ")
                     
             cur.execute("CREATE TABLE IF NOT EXISTS tiktoks ("
-                        "id BIGINT PRIMARY KEY,"
-                        "user_id TEXT,"
-                        "description TEXT NOT NULL,"
-                        "time TIMESTAMP NOT NULL,"
-                        "CONSTRAINT fk_users FOREIGN KEY (user_id)"
-                        "REFERENCES users (unique_id)"
-                        "ON DELETE CASCADE"
+                        "id BIGINT PRIMARY KEY, "
+                        "user_id TEXT, "
+                        "description TEXT NOT NULL, "
+                        "time TIMESTAMP NOT NULL, "
+                        "CONSTRAINT fk_users FOREIGN KEY (user_id) "
+                        "REFERENCES users (unique_id) "
+                        "ON DELETE CASCADE "
                         "ON UPDATE CASCADE);")
                     
             cur.execute("CREATE TABLE IF NOT EXISTS conversations ("
-                        "chat_id INTEGER PRIMARY KEY,"
-                        "main_menu_state INTEGER NULL);")
+                        "chat_id INTEGER PRIMARY KEY, "
+                        "main_menu_state INTEGER NULL); ")
 
             cur.execute("CREATE TABLE IF NOT EXISTS chats ("
-                        "chat_id integer CONSTRAINT chats_pkey PRIMARY KEY REFERENCES conversations "
-                        "ON DELETE CASCADE ON UPDATE CASCADE,"
-                        "title varchar(256),"
-                        "description varchar(256),"
-                        "photo varchar(1000)")
+                        "chat_id INTEGER PRIMARY KEY REFERENCES conversations "
+                        "ON DELETE CASCADE ON UPDATE CASCADE, "
+                        "title VARCHAR(256), "
+                        "description VARCHAR(256), "
+                        "photo VARCHAR(1000));")
 
             cur.execute("CREATE TABLE IF NOT EXISTS bot_users ("
-                        "user_id integer CONSTRAINT users_pkey PRIMARY KEY,"
-                        "chat_id integer REFERENCES conversations ON DELETE SET NULL ON UPDATE CASCADE,"
-                        "username varchar(32),"
-                        "first_name varchar(256),"
-                        "last_name varchar(256)")
+                        "user_id INTEGER PRIMARY KEY, "
+                        "chat_id INTEGER REFERENCES conversations ON DELETE SET NULL ON UPDATE CASCADE, "
+                        "username VARCHAR(32), "
+                        "first_name VARCHAR(256), "
+                        "last_name VARCHAR(256));")
 
         self.connection.commit()
 
@@ -280,6 +280,7 @@ class Database:
                         sql.Identifier(columns[0]),
                         sql.SQL(',').join(setting_columns))
                     cur.execute(query)
+            self.connection.commit()
 
     def update_chat_data(self, chat_data: dict):
         """
@@ -296,4 +297,4 @@ class Database:
         :param user_data:
         :return:
         """
-        self.update_data('users', user_data)
+        self.update_data('bot_users', user_data)
