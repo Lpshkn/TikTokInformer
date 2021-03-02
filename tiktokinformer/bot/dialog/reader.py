@@ -22,34 +22,6 @@ def start_info():
     return _get_info(os.path.join(INFO_DIRECTORY, "start_info.html"))
 
 
-def stop_bot_info(language_code: str):
-    return _get_info(os.path.join("./localization", get_language_code(language_code), "info", "stop_bot_info.html"))
+def stop_bot_info():
+    return _get_info(os.path.join(INFO_DIRECTORY, "stop_bot_info.html"))
 
-
-def main_menu(language_code: str):
-    return _get_menu(os.path.join("./localization", get_language_code(language_code), "menu", "main.json"))
-
-
-def accept_cancel_menu(language_code: str):
-    return _get_menu(os.path.join("./localization", get_language_code(language_code), "menu", "accept_cancel.json"))
-
-
-def add_lists_info(language_code: str):
-    return _get_info(os.path.join("./localization", get_language_code(language_code), "info", "add_lists_info.html"))
-
-
-def error_adding_entry(language_code: str):
-    return _get_info(
-        os.path.join("./localization", get_language_code(language_code), "info", "error_adding_entry.html"))
-
-
-def cancel(language_code: str):
-    return _get_info(os.path.join("./localization", get_language_code(language_code), "info", "cancel.html"))
-
-
-def accept(language_code: str):
-    return _get_info(os.path.join("./localization", get_language_code(language_code), "info", "accept.html"))
-
-
-def recall_message(language_code: str):
-    return _get_info(os.path.join("./localization", get_language_code(language_code), "info", "recall_message.html"))
