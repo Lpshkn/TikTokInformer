@@ -23,5 +23,5 @@ def start_info():
 
 
 def stop_bot_info():
-    return _get_info(os.path.join(INFO_DIRECTORY, "stop_bot_info.html"))
+    return _get_info(os.path.join(INFO_DIRECTORY, "stop_info.html"))
 
