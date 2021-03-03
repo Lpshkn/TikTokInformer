@@ -339,3 +339,18 @@ class Database:
             self.delete_favourite_users(bot_data)
         else:
             self.add_favourite_users(bot_data)
+
+    def get_chats_favourite_users(self, unique_id: str):
+        """
+        Method returns a list of ids of chats associated with the certain tiktoker.
+
+        :param unique_id: the nickname of a tiktoker
+        :return: a list of chat ids
+        """
+        with self.connection.cursor() as cur:
+            query = sql.SQL("SELECT chat_id FROM favourite_users "
+                            "WHERE unique_id = {}").format(sql.Literal(unique_id))
+            cur.execute(query)
+            chat_ids = [chat_id[0] for chat_id in cur.fetchall()]
+
+        return chat_ids
