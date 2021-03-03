@@ -40,6 +40,44 @@ def stop_bot_handler(update: telegram.Update, context: telegram.ext.CallbackCont
     return telegram.ext.ConversationHandler.END
 
 
+def main_menu_handler(update: telegram.Update, context: telegram.ext.CallbackContext):
+    """
+    The handler for the main menu. This handler process commands for the main menu.
+    """
+    text = update.message.text
+    delete = False
+    correct = True
+    unique_ids = []
+
+    if text.startswith('-'):
+        delete = True
+        # Remove the minus
+        text = text[1:].strip()
+
+    # Check that all nicknames are corrected or send the error message
+    for row in re.split(r'[\s]+', text):
+        if re.match(r"^@[\w.]+$", row):
+            # Remove '@' in the nickname
+            unique_ids.append(row[1:])
+        else:
+            correct = False
+            break
+
+    if correct:
+        if delete:
+            message = "Я удалил этих тиктокеров из вашего профиля. Не такие они и классные..."
+        else:
+            message = "Я добавил перечисленных тиктокеров к вам в профиль. Надеюсь, вы не ошибаетесь :)"
+
+        context.bot.sendMessage(chat_id=update.effective_chat.id,
+                                text=message)
+        update_bot_data(update, context, unique_ids=unique_ids, delete=delete)
+    else:
+        context.bot.sendMessage(chat_id=update.effective_chat.id,
+                                text="Я не понимаю о чём вы говорите :(")
+    return MAIN
+
+
 def update_chat_data(update: telegram.Update, context: telegram.ext.CallbackContext):
     """
     Function to update the chat_data receiving from the user.
@@ -59,65 +97,7 @@ def update_user_data(update: telegram.Update, context: telegram.ext.CallbackCont
     context.user_data['last_name'] = update.effective_user.last_name
 
 
-def main_menu_handler(update: telegram.Update, context: telegram.ext.CallbackContext):
-    """
-    The handler for the main menu. This handler process commands for the main menu.
-    """
-    pass
-
-
-def process_entries(text: str, update: telegram.Update, context: telegram.ext.CallbackContext) -> set:
-    """
-    Method processes the text received from the user and checks that entries are correct.
-    This method will be called by add_lists_handler that processes adding new lists of entries.
-    Returns a list of tuples that contain the name of an entry and the date.
-    """
-    language_code = update.effective_user.language_code if update.effective_user.language_code == 'ru' else 'en'
-
-    incorrect_lines = set()
-    entries = set()
-    for line in text.splitlines():
-        line.strip()
-        # Check the line matches the pattern
-        if not re.match(
-                r"^[\w ]+ *- *((0?[1-9])|([1-2][0-9])|(3[0-1]))(( +[а-яА-Яa-zA-Z]{3,9})|([./]((0?[1-9])|(1[0-2]))))"
-                r"( +((0?[0-9])|(1[0-9])|(2[0-3])):([0-5][0-9])(:[0-5][0-9])?)?$",
-                line, re.IGNORECASE):
-            incorrect_lines.add(line)
-        else:
-            # Get the name and the date of an entry
-            name, date_entry = [x.strip() for x in line.split('-')]
-
-            time = None
-            _splits = re.split(r'[ ./]+', date_entry, maxsplit=2)
-            if len(_splits) == 2:
-                day, month = _splits
-            elif len(_splits) == 3:
-                day, month, time = _splits
-                time = time.split(':')
-                if len(time) == 2:
-                    time = dt.time(hour=int(time[0]), minute=int(time[1]))
-                elif len(time) == 3:
-                    time = dt.time(hour=int(time[0]), minute=int(time[1]), second=int(time[2]))
-                else:
-                    time = dt.time.fromisoformat('12:00:00')
-            else:
-                raise ValueError("Incorrect entry in the process_entries function")
-
-            year = dt.datetime.now().year
-
-            # A day or a month may be incorrect
-            try:
-                date_entry = dt.date(year=year, month=int(month), day=int(day))
-                entries.add((name, date_entry, time))
-            except ValueError:
-                incorrect_lines.add(line)
-
-    # Send incorrect lines to the user
-    if incorrect_lines:
-        chat_id = update.effective_chat.id
-        code = update.effective_user.language_code
-        context.bot.sendMessage(chat_id=chat_id,
-                                text="",
-                                parse_mode=telegram.ParseMode.HTML)
-    return entries
+def update_bot_data(update: telegram.Update, context: telegram.ext.CallbackContext, unique_ids: list, delete=False):
+    context.bot_data['unique_id'] = unique_ids
+    context.bot_data['chat_id'] = update.effective_chat.id
+    context.bot_data['delete'] = delete
