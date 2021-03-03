@@ -120,14 +120,26 @@ class BotPersistence(BasePersistence):
         if self.chat_data:
             self.database.update_chat_data(self.chat_data)
         if self.bot_data:
-            pass
+            self.database.update_bot_data(self.bot_data)
         if self.conversations:
             self.database.update_conversations(self.conversations)
 
         self.database.connection.close()
 
     def update_bot_data(self, data):
-        pass
+        if self.bot_data is None:
+            self.bot_data = defaultdict(dict)
+        if self.bot_data == data:
+            return
+        self.bot_data = data
+        if not self.on_flush:
+            self.database.update_bot_data(self.bot_data)
 
     def get_bot_data(self):
-        pass
+        if self.user_data:
+            pass
+        else:
+            data = defaultdict(dict)
+            self.user_data = data
+
+        return deepcopy(self.user_data)
