@@ -5,6 +5,7 @@ from tiktokinformer.utils import get_sublists
 from tiktokinformer.informer.user import User
 from tiktokinformer.informer.tiktok import Tiktok
 from tiktokinformer.database.db import Database
+from tiktokinformer.bot.bot import TikTokInformerBot
 
 logging.basicConfig(format='[%(asctime)s]: %(message)s\n',
                     level=logging.INFO)
@@ -18,9 +19,10 @@ class TikTokInformer:
     # Dict of {username: timestamp_of_the_last_video}
     last_timestamps = {}
 
-    def __init__(self, names: list, database: Database):
+    def __init__(self, names: list, database: Database, bot: TikTokInformerBot):
         self.database = database
         self.names = names
+        self.bot = bot
         self.api = TikTokApi.get_instance(use_selenium=True)
 
     async def run(self):
@@ -64,6 +66,8 @@ class TikTokInformer:
                     self.last_timestamps[user.unique_id] = tiktok.time
                     self.database.add_tiktok(tiktok)
 
-                    logging.info(f"New video of '{user.unique_id}': {tiktok.desc}")
+                    # Send notifications
+                    for chat_id in self.database.get_chats_favourite_users(name):
+                        await self.bot.send_notification(chat_id, tiktok)
 
         await asyncio.sleep(self.timeout)
