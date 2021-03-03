@@ -287,6 +287,36 @@ class Database:
                     cur.execute(query)
             self.connection.commit()
 
+    def delete_favourite_users(self, data: dict):
+        """
+        Delete rows of the favourite users table.
+
+        :param data: a dictionary of {unique_id: list of unique_ids, chat_id: id of a chat}
+        """
+        with self.connection.cursor() as cur:
+            query = sql.SQL("DELETE FROM favourite_users WHERE chat_id = {0} AND unique_id IN ({1})").format(
+                sql.Literal(data['chat_id']),
+                sql.SQL(',').join(data['unique_id']))
+            cur.execute(query)
+        self.connection.commit()
+
+    def add_favourite_users(self, data: dict):
+        """
+        Add rows of the favourite users table.
+
+        :param data: a dictionary of {unique_id: list of unique_ids, chat_id: id of a chat}
+        """
+        with self.connection.cursor() as cur:
+            for unique_id in data['unique_id']:
+                query = sql.SQL("INSERT INTO favourite_users (unique_id, chat_id) "
+                                "VALUES ({0}, {1}) "
+                                "ON CONFLICT (chat_id, unique_id) DO UPDATE SET "
+                                "chat_id = EXCLUDE.chat_id, unique_id = EXCLUDE.unique_id").format(
+                    sql.Literal(unique_id),
+                    sql.Literal(data['chat_id']))
+                cur.execute(query)
+        self.connection.commit()
+
     def update_chat_data(self, chat_data: dict):
         """
         Method updates the data of chats in the database (if it was changed).
@@ -298,8 +328,14 @@ class Database:
     def update_user_data(self, user_data: dict):
         """
         Method updates the data of users in the database (if it was changed).
-
-        :param user_data:
-        :return:
         """
         self.update_data('bot_users', user_data)
+
+    def update_bot_data(self, bot_data: dict):
+        """
+        Method updates the data of favourite users received from the bot information.
+        """
+        if bot_data['delete']:
+            self.delete_favourite_users(bot_data)
+        else:
+            self.add_favourite_users(bot_data)
