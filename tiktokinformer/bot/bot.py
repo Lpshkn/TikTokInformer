@@ -3,6 +3,7 @@ import logging
 from tiktokinformer.bot.persistence import BotPersistence
 from tiktokinformer.database.db import Database
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
+from tiktokinformer.informer.tiktok import Tiktok
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -42,3 +43,18 @@ class TikTokInformerBot:
 
         self.updater.start_polling()
         self.updater.idle()
+
+    async def send_notification(self, chat_id: int, tiktok: Tiktok):
+        """
+        Method to send notification to a user that a new video was released.
+
+        :param chat_id: the id of a user
+        :param tiktok: Tiktok object
+        """
+        text = f"Тут вышло новое видео у @{tiktok.user_id}, посмотри!\n" \
+               f"Описание: {tiktok.desc}.\n" \
+               f"https://www.tiktok.com/@{tiktok.user_id}/video/{tiktok.id}"
+
+        self.updater.bot.sendMessage(chat_id=chat_id,
+                                     text=text,
+                                     disable_web_page_preview=True)
