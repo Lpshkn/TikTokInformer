@@ -75,6 +75,11 @@ class Database:
                         "first_name VARCHAR(256), "
                         "last_name VARCHAR(256));")
 
+            cur.execute("CREATE TABLE IF NOT EXISTS favourite_users ("
+                        "id SERIAL PRIMARY KEY, "
+                        "unique_id TEXT REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE, "
+                        "chat_id INTEGER REFERENCES conversations ON DELETE CASCADE ON UPDATE CASCADE);")
+
         self.connection.commit()
 
     @property
