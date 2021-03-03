@@ -14,14 +14,17 @@ TOKEN = os.getenv('TOKEN')
 
 
 async def main():
-    db = Database.connect(host=PG_HOST, port=PG_PORT,
-                          user=PG_USER, password=PG_PASS,
-                          database=PG_NAME)
+    bot_db = Database.connect(host=PG_HOST, port=PG_PORT,
+                              user=PG_USER, password=PG_PASS,
+                              database=PG_NAME)
+    informer_db = Database.connect(host=PG_HOST, port=PG_PORT,
+                                   user=PG_USER, password=PG_PASS,
+                                   database=PG_NAME)
 
     names = get_top_users(10)
 
-    bot = TikTokInformerBot(token=TOKEN, database=db)
-    informer = TikTokInformer(names=names, database=db)
+    bot = TikTokInformerBot(token=TOKEN, database=bot_db)
+    informer = TikTokInformer(names=names, database=informer_db, bot=bot)
 
     await asyncio.gather(
         asyncio.create_task(informer.run()),
