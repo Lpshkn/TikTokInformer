@@ -15,7 +15,7 @@ def _get_info(filename: str) -> str:
         return file.read()
 
 
-INFO_DIRECTORY = os.path.join("tiktokinformer", "bot", "dialog", "info")
+INFO_DIRECTORY = os.path.join("dialog", "info")
 
 
 def start_info():

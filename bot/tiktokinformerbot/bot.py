@@ -1,9 +1,8 @@
-import tiktokinformer.bot.handlers as handlers
+import bot.tiktokinformerbot.handlers as handlers
 import logging
-from tiktokinformer.bot.persistence import BotPersistence
-from tiktokinformer.database.db import Database
+from bot.tiktokinformerbot.persistence import BotPersistence
+from bot.database.db import Database
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
-from tiktokinformer.informer.tiktok import Tiktok
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -11,7 +10,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 class TikTokInformerBot:
     def __init__(self, token: str, database: Database):
-        persistence = BotPersistence(database, store_bot_data=False)
+        persistence = BotPersistence(database)
 
         self.database = database
 
@@ -23,7 +22,7 @@ class TikTokInformerBot:
         # This dict will be cleared when the user will press the "accept" or the "cancel" button
         self.entries = {}
 
-    async def run(self):
+    def run(self):
         """
         The entrypoint of the bot. Define the ConversationHandler and specify all the handlers.
         """
@@ -43,18 +42,3 @@ class TikTokInformerBot:
 
         self.updater.start_polling()
         self.updater.idle()
-
-    async def send_notification(self, chat_id: int, tiktok: Tiktok):
-        """
-        Method to send notification to a user that a new video was released.
-
-        :param chat_id: the id of a user
-        :param tiktok: Tiktok object
-        """
-        text = f"Тут вышло новое видео у @{tiktok.user_id}, посмотри!\n" \
-               f"Описание: {tiktok.desc}.\n" \
-               f"https://www.tiktok.com/@{tiktok.user_id}/video/{tiktok.id}"
-
-        self.updater.bot.sendMessage(chat_id=chat_id,
-                                     text=text,
-                                     disable_web_page_preview=True)

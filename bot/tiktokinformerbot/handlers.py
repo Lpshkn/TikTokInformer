@@ -1,11 +1,12 @@
 """
 Module for all the handlers which will be processed by the ConversationHandler
 """
-import datetime as dt
 import re
 import telegram
-from tiktokinformer.bot.dialog import reader
+from bot.dialog import reader
 from telegram.ext import Updater
+from TikTokApi import TikTokApi
+from TikTokApi.exceptions import TikTokNotFoundError
 
 # Define all the states of the bot
 MAIN, = range(1)
@@ -31,7 +32,6 @@ def stop_bot_handler(update: telegram.Update, context: telegram.ext.CallbackCont
     """
     The handler to /stop command. This handler stops the bot and remove all data about the user
     """
-    code = update.effective_user.language_code
     context.bot.sendMessage(chat_id=update.effective_chat.id,
                             text=reader.stop_bot_info(),
                             parse_mode=telegram.ParseMode.HTML,
@@ -64,6 +64,17 @@ def main_menu_handler(update: telegram.Update, context: telegram.ext.CallbackCon
             break
 
     if correct:
+        api = TikTokApi.get_instance(use_selenium=True)
+        for unique_id in unique_ids:
+            try:
+                # Check that users exist
+                api.getUser(username=unique_id)
+            except TikTokNotFoundError:
+                context.bot.sendMessage(chat_id=update.effective_chat.id,
+                                        text=f"Кажется, профиля с именем @{unique_id} не существует...\n"
+                                             f"Пожалуйста, измените запрос.")
+                return MAIN
+
         if delete:
             message = "Я удалил этих тиктокеров из вашего профиля. Не такие они и классные..."
         else:

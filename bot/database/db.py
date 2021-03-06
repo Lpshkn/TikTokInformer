@@ -296,7 +296,7 @@ class Database:
         with self.connection.cursor() as cur:
             query = sql.SQL("DELETE FROM favourite_users WHERE chat_id = {0} AND unique_id IN ({1})").format(
                 sql.Literal(data['chat_id']),
-                sql.SQL(',').join(data['unique_id']))
+                sql.SQL(',').join(map(sql.Literal, data['unique_id'])))
             cur.execute(query)
         self.connection.commit()
 

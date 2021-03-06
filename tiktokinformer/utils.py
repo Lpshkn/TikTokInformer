@@ -39,6 +39,9 @@ def get_sublists(main_list: list, count: int):
     :param count: count of sublists
     :return: list of sublists
     """
+    if not main_list:
+        return [[]]
+
     # Minimal count of elements per sublist
     count_per_list = len(main_list) // count
 
