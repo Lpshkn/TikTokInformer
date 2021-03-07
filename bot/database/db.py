@@ -355,14 +355,18 @@ class Database:
 
         return chat_ids
 
-    def get_favourite_users(self):
+    def get_favourite_users(self, chat_id=None):
         """
         Method returns a list of unique ids containing in the database.
 
         :return: a list of unique ids
         """
         with self.connection.cursor() as cur:
-            query = sql.SQL("SELECT DISTINCT unique_id FROM favourite_users")
+            if chat_id is None:
+                query = sql.SQL("SELECT DISTINCT unique_id FROM favourite_users")
+            else:
+                query = sql.SQL("SELECT DISTINCT unique_id FROM favourite_users WHERE chat_id = {}").format(
+                    sql.Literal(chat_id))
             cur.execute(query)
             unique_ids = [unique_id[0] for unique_id in cur.fetchall()]
 
