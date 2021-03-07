@@ -16,6 +16,7 @@ class TikTokInformerBot:
 
         self.updater = Updater(token=token, use_context=True, persistence=persistence)
         self.dispatcher = self.updater.dispatcher
+        self.dispatcher.bot_data['database'] = database
         self.job_queue = self.updater.job_queue
 
         # Dictionary with the chat_id and entries of this chat that a user want to add.
