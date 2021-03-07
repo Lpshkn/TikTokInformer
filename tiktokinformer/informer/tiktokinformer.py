@@ -1,7 +1,6 @@
-import asyncio
 import logging
+import time
 from TikTokApi import TikTokApi
-from tiktokinformer.utils import get_sublists
 from tiktokinformer.informer.user import User
 from tiktokinformer.informer.tiktok import Tiktok
 from tiktokinformer.database.db import Database
@@ -13,9 +12,7 @@ logging.basicConfig(format='[%(asctime)s]: %(message)s\n',
 
 class TikTokInformer:
     # Timeout of requests in seconds
-    timeout = 5
-    # Count of concurrent tasks
-    count_tasks = 5
+    timeout = 300
 
     def __init__(self, database: Database, bot):
         self.database = database
@@ -23,7 +20,7 @@ class TikTokInformer:
         self.bot = bot
         self.api = TikTokApi.get_instance(use_selenium=True)
 
-    async def run(self):
+    def run(self):
         """
         Runs a loop that creates tasks and waits when they will be finished.
         """
@@ -31,15 +28,12 @@ class TikTokInformer:
             self.names = self.database.get_favourite_users()
 
             if not self.names:
-                await asyncio.sleep(self.timeout)
+                time.sleep(self.timeout)
                 continue
 
-            names_lists = get_sublists(self.names, self.count_tasks)
+            self._load_profiles(self.names)
 
-            tasks = [asyncio.create_task(self._load_profiles(names_list)) for names_list in names_lists]
-            await asyncio.gather(*tasks)
-
-    async def _load_profiles(self, names: list):
+    def _load_profiles(self, names: list):
         """
         Makes a request to TikTok for certain profiles and insert information about it
         and its videos into the database.
@@ -61,11 +55,11 @@ class TikTokInformer:
 
                     # Send notifications
                     for chat_id in self.database.get_chats_favourite_users(name):
-                        await self.send_notification(chat_id, tiktok)
+                        self.send_notification(chat_id, tiktok)
 
-        await asyncio.sleep(self.timeout)
+        time.sleep(self.timeout)
 
-    async def send_notification(self, chat_id: int, tiktok: Tiktok):
+    def send_notification(self, chat_id: int, tiktok: Tiktok):
         """
         Method to send notification to a user that a new video was released.
 
