@@ -49,6 +49,16 @@ def main_menu_handler(update: telegram.Update, context: telegram.ext.CallbackCon
     correct = True
     unique_ids = []
 
+    if text == '*':
+        database = context.bot_data['database']
+        unique_ids = database.get_favourite_users(chat_id=update.effective_chat.id)
+        unique_ids = ['@' + unique_id for unique_id in unique_ids]
+        context.bot.sendMessage(chat_id=update.effective_chat.id,
+                                text=f"Ваши подписки:\n\n" +
+                                     "\n".join(unique_ids))
+
+        return MAIN
+
     if text.startswith('-'):
         delete = True
         # Remove the minus
