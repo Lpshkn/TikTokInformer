@@ -19,6 +19,7 @@ class TikTokInformer:
         self.names = []
         self.bot = bot
         self.api = TikTokApi.get_instance(use_selenium=True)
+        self.last_timestamps = {}
 
     def run(self):
         """
@@ -49,9 +50,10 @@ class TikTokInformer:
             for item in user_dict['items'][::-1]:
                 tiktok = Tiktok(item)
 
-                # Check whether it's a new video or not
-                if tiktok.time > datetime.now() - timedelta(seconds=self.timeout):
+                if tiktok.time > self.last_timestamps.get(name, datetime.now() - timedelta(seconds=self.timeout)):
+                    # Check whether it's a new video or not
                     self.database.add_tiktok(tiktok)
+                    self.last_timestamps[name] = tiktok.time
 
                     # Send notifications
                     for chat_id in self.database.get_chats_favourite_users(name):
