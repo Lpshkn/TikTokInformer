@@ -52,10 +52,12 @@ def main_menu_handler(update: telegram.Update, context: telegram.ext.CallbackCon
     if text == '*':
         database = context.bot_data['database']
         unique_ids = database.get_favourite_users(chat_id=update.effective_chat.id)
-        unique_ids = ['@' + unique_id for unique_id in unique_ids]
+        unique_ids = [f'<a href="https://www.tiktok.com/@{unique_id}">{unique_id}</a>' for unique_id in unique_ids]
         context.bot.sendMessage(chat_id=update.effective_chat.id,
                                 text=f"Ваши подписки:\n\n" +
-                                     "\n".join(unique_ids))
+                                     "\n".join(unique_ids),
+                                parse_mode=telegram.ParseMode.HTML,
+                                disable_web_page_preview=True)
 
         return MAIN
 
