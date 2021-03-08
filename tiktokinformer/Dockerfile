@@ -18,7 +18,6 @@ FROM builder
 MAINTAINER lpshkn
 
 COPY . /informer
-COPY ../requirements.txt /informer
 WORKDIR /informer
 
-RUN pip3 install -r requirements.txt
+RUN apt-get install -y libpq-dev && pip3 install -r requirements.txt
