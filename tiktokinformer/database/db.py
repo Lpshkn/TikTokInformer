@@ -2,8 +2,8 @@ import psycopg2
 import logging
 from psycopg2 import sql
 from collections import defaultdict
-from tiktokinformer.informer.user import User
-from tiktokinformer.informer.tiktok import Tiktok
+from informer.user import User
+from informer.tiktok import Tiktok
 from datetime import datetime as dt
 
 logging.basicConfig(format='[%(asctime)s]: %(message)s\n',

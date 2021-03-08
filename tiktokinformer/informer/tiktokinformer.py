@@ -1,9 +1,9 @@
 import logging
 import time
 from TikTokApi import TikTokApi
-from tiktokinformer.informer.user import User
-from tiktokinformer.informer.tiktok import Tiktok
-from tiktokinformer.database.db import Database
+from informer.user import User
+from informer.tiktok import Tiktok
+from database.db import Database
 from datetime import datetime, timedelta
 
 logging.basicConfig(format='[%(asctime)s]: %(message)s\n',

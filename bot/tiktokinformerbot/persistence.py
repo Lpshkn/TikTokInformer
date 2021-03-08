@@ -1,7 +1,7 @@
 """
 This method implements the inheritance from the BasePersistence class to provide the persistence of the bot.
 """
-from tiktokinformer.database.db import Database
+from database.db import Database
 from telegram.ext import BasePersistence
 from collections import defaultdict
 from copy import deepcopy

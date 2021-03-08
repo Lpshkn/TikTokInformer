@@ -2,8 +2,6 @@ import psycopg2
 import logging
 from psycopg2 import sql
 from collections import defaultdict
-from tiktokinformer.informer.user import User
-from tiktokinformer.informer.tiktok import Tiktok
 from datetime import datetime as dt
 
 logging.basicConfig(format='[%(asctime)s]: %(message)s\n',
@@ -103,7 +101,7 @@ class Database:
             self.connection.rollback()
             logging.warning(e)
 
-    def add_user(self, user: User):
+    def add_user(self, user):
         """
         Adds a new row of User into the users table.
 
@@ -126,7 +124,7 @@ class Database:
                       heart_cnt=user.heart_count,
                       video_cnt=user.video_count)
 
-    def add_tiktok(self, tiktok: Tiktok):
+    def add_tiktok(self, tiktok):
         """
         Adds a new row of Tiktok into the tiktoks table.
 

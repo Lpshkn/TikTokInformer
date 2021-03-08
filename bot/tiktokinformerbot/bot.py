@@ -1,7 +1,7 @@
-import bot.tiktokinformerbot.handlers as handlers
+import tiktokinformerbot.handlers as handlers
 import logging
-from bot.tiktokinformerbot.persistence import BotPersistence
-from bot.database.db import Database
+from tiktokinformerbot.persistence import BotPersistence
+from database.db import Database
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

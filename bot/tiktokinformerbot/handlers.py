@@ -3,7 +3,7 @@ Module for all the handlers which will be processed by the ConversationHandler
 """
 import re
 import telegram
-from bot.dialog import reader
+from dialog import reader
 from telegram.ext import Updater
 from TikTokApi import TikTokApi
 from TikTokApi.exceptions import TikTokNotFoundError

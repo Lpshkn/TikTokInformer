@@ -1,7 +1,7 @@
 import os
 import asyncio
-from tiktokinformer.informer.tiktokinformer import TikTokInformer
-from tiktokinformer.database.db import Database
+from informer.tiktokinformer import TikTokInformer
+from database.db import Database
 from telegram.ext import Updater
 
 
