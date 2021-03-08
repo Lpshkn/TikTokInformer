@@ -2,12 +2,12 @@ version: "3"
 services:
   bot:
     build: bot/
-    command: python ./main.py
-    ports:
-      - 5432:5432
+    container_name: tiktokinformer_bot
+    command: python3 ./main.py
 
   informer:
     build: tiktokinformer/
-    command: python ./main.py
-    ports:
-      - 5432:5432
+    container_name: tiktokinformer_informer
+    command: python3 ./main.py
+    depends_on: 
+      - bot
